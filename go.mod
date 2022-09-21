@@ -1,4 +1,4 @@
-module github.com/hwholiday/learning_tools
+module github.com/walkmiao/learning_tools
 
 go 1.18
 
@@ -28,6 +28,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/hashicorp/memberlist v0.3.0
 	github.com/hpcloud/tail v1.0.0
+	github.com/hwholiday/learning_tools v1.0.0
 	github.com/lucas-clemente/quic-go v0.27.1
 	github.com/micro/cli v0.2.0
 	github.com/micro/go-micro v1.18.0
@@ -136,7 +137,6 @@ require (
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
-	github.com/lib/pq v1.10.4 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/marten-seemann/qpack v0.2.1 // indirect
@@ -152,7 +152,6 @@ require (
 	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/nats-io/nats-server/v2 v2.6.5 // indirect
 	github.com/nats-io/nats.go v1.13.1-0.20211018182449-f2416a8b1483 // indirect
 	github.com/nats-io/nkeys v0.3.0 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
@@ -214,10 +213,8 @@ require (
 
 require (
 	github.com/apolloconfig/agollo/v4 v4.0.11
-	github.com/nats-io/nats-streaming-server v0.23.2 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
-	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.23.0
 	k8s.io/apimachinery v0.23.0

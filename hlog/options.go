@@ -6,7 +6,8 @@ type Options struct {
 	Development  bool
 	LogFileDir   string
 	AppName      string
-	MaxSize      int //文件多大开始切分
+	Format       string
+	MaxSize      int //文件多大开始切分 单位:M
 	MaxBackups   int //保留文件个数
 	MaxAge       int //文件保留最大实际
 	Level        string
@@ -15,9 +16,9 @@ type Options struct {
 	WriteConsole bool
 }
 
-type HLogOptions func(*Options)
+type LogOptions func(*Options)
 
-func newOptions(opts ...HLogOptions) *Options {
+func newOptions(opts ...LogOptions) *Options {
 	opt := &Options{
 		Development:  true,
 		AppName:      "hlog-app",
@@ -37,60 +38,66 @@ func newOptions(opts ...HLogOptions) *Options {
 	return opt
 }
 
-func SetDevelopment(development bool) HLogOptions {
+func SetDevelopment(development bool) LogOptions {
 	return func(options *Options) {
 		options.Development = development
 	}
 }
 
-func SetLogFileDir(logFileDir string) HLogOptions {
+func SetLogFileDir(logFileDir string) LogOptions {
 	return func(options *Options) {
 		options.LogFileDir = logFileDir
 	}
 }
 
-func SetAppName(appName string) HLogOptions {
+func SetAppName(appName string) LogOptions {
 	return func(options *Options) {
 		options.AppName = appName
 	}
 }
 
-func SetMaxSize(maxSize int) HLogOptions {
+func SetMaxSize(maxSize int) LogOptions {
 	return func(options *Options) {
 		options.MaxSize = maxSize
 	}
 }
-func SetMaxBackups(maxBackups int) HLogOptions {
+func SetMaxBackups(maxBackups int) LogOptions {
 	return func(options *Options) {
 		options.MaxBackups = maxBackups
 	}
 }
-func SetMaxAge(maxAge int) HLogOptions {
+func SetMaxAge(maxAge int) LogOptions {
 	return func(options *Options) {
 		options.MaxAge = maxAge
 	}
 }
 
-func SetLevel(level string) HLogOptions {
+func SetLevel(level string) LogOptions {
 	return func(options *Options) {
 		options.Level = level
 	}
 }
 
-func SetCtxKey(ctxKey string) HLogOptions {
+func SetCtxKey(ctxKey string) LogOptions {
 	return func(options *Options) {
 		options.CtxKey = ctxKey
 	}
 }
 
-func SetWriteFile(writeFile bool) HLogOptions {
+func SetWriteFile(writeFile bool) LogOptions {
 	return func(options *Options) {
 		options.WriteFile = writeFile
 	}
 }
 
-func SetWriteConsole(writeConsole bool) HLogOptions {
+func SetWriteConsole(writeConsole bool) LogOptions {
 	return func(options *Options) {
 		options.WriteConsole = writeConsole
+	}
+}
+
+func SetTimeFormat(format string) LogOptions {
+	return func(options *Options) {
+		options.Format = format
 	}
 }
