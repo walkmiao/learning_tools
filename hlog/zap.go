@@ -2,7 +2,6 @@ package hlog
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"strings"
 	"sync"
@@ -13,39 +12,44 @@ import (
 )
 
 var (
-	l            *Logger
+	l            *HLogger
 	outWrite     zapcore.WriteSyncer       // IO输出
 	debugConsole = zapcore.Lock(os.Stdout) // 控制台标准输出
 	once         sync.Once
 )
 
-type Logger struct {
+type HLogger struct {
 	*zap.Logger
 	opts      *Options
 	zapConfig zap.Config
 }
 
-func NewLogger(opts ...HLogOptions) {
-	once.Do(func() {
-		l = &Logger{
-			opts: newOptions(opts...),
-		}
-		l.loadCfg()
-		l.initHLog()
-		l.Info("[initLogger] zap plugin initializing completed")
-	})
+func NewLogger(opts ...LogOptions) *HLogger {
+	logger := &HLogger{
+		opts: newOptions(opts...),
+	}
+	logger.loadCfg()
+	logger.initHLog()
+	logger.Info("[NewLogger] zap plugin initializing completed")
+	return logger
 }
 
 // GetLogger returns logger
-func GetLogger() *Logger {
+func Default() *HLogger {
 	if l == nil {
-		fmt.Println("Please initialize the hlog service first")
-		return nil
+		once.Do(func() {
+			l = &HLogger{
+				opts: newOptions(),
+			}
+			l.loadCfg()
+			l.initHLog()
+			l.Info("[DefaultLogger] zap plugin initializing completed")
+		})
 	}
 	return l
 }
 
-func (l *Logger) GetCtx(ctx context.Context) *zap.Logger {
+func (l *HLogger) GetCtx(ctx context.Context) *zap.Logger {
 	log, ok := ctx.Value(l.opts.CtxKey).(*zap.Logger)
 	if ok {
 		return log
@@ -53,7 +57,7 @@ func (l *Logger) GetCtx(ctx context.Context) *zap.Logger {
 	return l.Logger
 }
 
-func (l *Logger) WithContext(ctx context.Context) *zap.Logger {
+func (l *HLogger) WithContext(ctx context.Context) *zap.Logger {
 	log, ok := ctx.Value(l.opts.CtxKey).(*zap.Logger)
 	if ok {
 		return log
@@ -61,13 +65,13 @@ func (l *Logger) WithContext(ctx context.Context) *zap.Logger {
 	return l.Logger
 }
 
-func (l *Logger) AddCtx(ctx context.Context, field ...zap.Field) (context.Context, *zap.Logger) {
+func (l *HLogger) AddCtx(ctx context.Context, field ...zap.Field) (context.Context, *zap.Logger) {
 	log := l.With(field...)
 	ctx = context.WithValue(ctx, l.opts.CtxKey, log)
 	return ctx, log
 }
 
-func (l *Logger) initHLog() {
+func (l *HLogger) initHLog() {
 	l.setSyncers()
 	var err error
 	l.Logger, err = l.zapConfig.Build(l.cores())
@@ -76,7 +80,7 @@ func (l *Logger) initHLog() {
 	}
 	defer l.Logger.Sync()
 }
-func (l *Logger) GetLevel() (level zapcore.Level) {
+func (l *HLogger) GetLevel() (level zapcore.Level) {
 	switch strings.ToLower(l.opts.Level) {
 	case "debug":
 		return zapcore.DebugLevel
@@ -97,7 +101,7 @@ func (l *Logger) GetLevel() (level zapcore.Level) {
 	}
 }
 
-func (l *Logger) loadCfg() {
+func (l *HLogger) loadCfg() {
 	if l.opts.Development {
 		l.zapConfig = zap.NewDevelopmentConfig()
 		//l.zapConfig.EncoderConfig.EncodeTime = timeEncoder
@@ -105,9 +109,12 @@ func (l *Logger) loadCfg() {
 		l.zapConfig = zap.NewProductionConfig()
 		//l.zapConfig.EncoderConfig.EncodeTime = timeUnixNano
 	}
+	if l.opts.Format != "" {
+		l.zapConfig.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout(l.opts.Format)
+	}
 }
 
-func (l *Logger) setSyncers() {
+func (l *HLogger) setSyncers() {
 	outWrite = zapcore.AddSync(&lumberjack.Logger{
 		Filename:   l.opts.LogFileDir + "/" + l.opts.AppName + ".log",
 		MaxSize:    l.opts.MaxSize,
@@ -119,7 +126,7 @@ func (l *Logger) setSyncers() {
 	return
 }
 
-func (l *Logger) cores() zap.Option {
+func (l *HLogger) cores() zap.Option {
 	encoder := zapcore.NewJSONEncoder(l.zapConfig.EncoderConfig)
 	priority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
 		return lvl >= l.GetLevel()
