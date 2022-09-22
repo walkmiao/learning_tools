@@ -1,5 +1,6 @@
 module github.com/walkmiao/toolkit
 
+
 go 1.18
 
 replace google.golang.org/grpc v1.40.0 => google.golang.org/grpc v1.27.0
