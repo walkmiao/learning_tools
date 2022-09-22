@@ -1,4 +1,4 @@
-module github.com/walkmiao/tools
+module github.com/walkmiao/toolkit
 
 go 1.18
 

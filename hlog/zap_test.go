@@ -11,7 +11,7 @@ func TestGetLogger(t *testing.T) {
 	log := Default()
 	log2 := NewLogger(SetAppName("test-app"),
 		SetWriteFile(true),
-		SetTimeFormat("2006-01-02 15:04:05"),
+		SetTimeFormat("2006-01-02 15:04:05.000"),
 		SetMaxSize(1))
 	log.Info("hconf example success")
 	// 可以在中间件内赋值
